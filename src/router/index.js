@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Cookies from 'js-cookie'
 
 import routes from './routes'
 
@@ -19,6 +20,23 @@ const Router = new VueRouter({
   base: process.env.VUE_ROUTER_BASE,
   scrollBehavior: () => ({ y: 0 }),
   routes
+
+})
+
+Router.beforeEach((to, from, next) => {
+  if (!Cookies.get('userId')) {
+    if (to.path === '/login' || to.path === '/register') {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    if (to.path === '/login' || to.path === '/register') {
+      next('/dashboard/msg')
+    } else {
+      next()
+    }
+  }
 })
 
 export default Router
