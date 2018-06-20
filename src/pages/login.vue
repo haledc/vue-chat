@@ -1,11 +1,12 @@
 <template>
-  <q-page paddding class="row justify-center">
+  <div class="row justify-center">
     <div class="q-mt-xl">
       <div class="logo text-center">
         <img src="~assets/logo.png" alt="logo">
       </div>
       <q-field class="q-mt-xl">
         <q-input
+          class="q-mb-sm"
           float-label="用户名"
           v-model="form.username"
           @blur="$v.form.username.$touch"
@@ -24,7 +25,7 @@
         <q-btn color="teal" class="full-width" @click="goRegister">注册</q-btn>
       </q-field>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script>
@@ -44,7 +45,7 @@
       form: {
         username: {
           required,
-          minLength: minLength(4)
+          minLength: minLength(3)
         },
         password: {
           required,

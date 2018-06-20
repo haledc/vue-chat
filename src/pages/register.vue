@@ -1,17 +1,19 @@
 <template>
-  <q-page padding class="row justify-center">
+  <div class="row justify-center">
     <div class="q-mt-xl">
       <div class="logo text-center">
         <img src="~assets/logo.png" alt="logo">
       </div>
       <q-field class="q-mt-xl">
         <q-input
+          class="q-mb-sm"
           float-label="用户名"
           v-model="form.username"
           @blur="$v.form.username.$touch"
           :error="$v.form.username.$error"
         />
         <q-input
+          class="q-mb-sm"
           float-label="密码"
           v-model="form.password"
           type="password"
@@ -34,7 +36,7 @@
         <q-btn color="primary" class="full-width" @click="Register">注册</q-btn>
       </q-field>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script>

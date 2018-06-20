@@ -1,0 +1,119 @@
+<template>
+  <q-layout view="Lhh lpR ffr">
+    <q-layout-header view="Hff">
+      <q-toolbar>
+        <q-btn icon="arrow_back" round dense @click="back"></q-btn>
+        <q-toolbar-title>{{targetName}}</q-toolbar-title>
+      </q-toolbar>
+    </q-layout-header>
+    <q-page-container>
+      <q-page padding class="q-mx-sm">
+        <div v-for="(msg, i) in filterList"
+             :key="i">
+          <q-chat-message
+            v-show="msg.from === target"
+            bgColor="teal"
+            :text="[msg.content]"
+            :avatar="setAvatar(msg.from)"
+          />
+          <q-chat-message
+            v-show="msg.from === user._id"
+            :sent="true"
+            textColor="white"
+            bgColor="primary"
+            :text="[msg.content]"
+            :avatar="setAvatar(msg.from)"
+          />
+        </div>
+      </q-page>
+    </q-page-container>
+    <q-layout-footer :reveal="false">
+      <q-toolbar>
+        <q-btn icon="arrow_back" round dense @click="back"></q-btn>
+        <q-toolbar-title class="text-center">{{targetName}}</q-toolbar-title>
+      </q-toolbar>
+    </q-layout-footer>
+  </q-layout>
+</template>
+
+<script>
+  import {mapGetters, mapMutations} from 'vuex'
+
+  export default {
+    data() {
+      return {
+        message: '',
+        target: '',
+        readNum: 0,
+        receiveData: '',
+        msg1: '123456'
+      }
+    },
+    created() {
+      this.target = this.$route.params.target
+      this.receiveMsg()
+    },
+    beforeDestroy() {
+      this.readMsg(this.target)
+    },
+    computed: {
+      targetName() {
+        return this.targetInfo[this.target].name
+      },
+      filterList() {
+        return this.chatMsg.filter(item => item.chatId.indexOf(this.target) > -1)
+      },
+      ...mapGetters('user', ['user', 'targetInfo']),
+      ...mapGetters('chat', ['chatMsg'])
+    },
+    methods: {
+      back() {
+        this.$router.back()
+      },
+      sendMsg() {
+        const from = this.user._id
+        if (this.message.trim()) {
+          this.$socket.emit('sendMsg', {from, to: this.target, msg: this.message})
+        }
+        this.message = ''
+      },
+      setAvatar(from) {
+        if (from === this.target) {
+          return `statics/avatar-img/${this.targetInfo[this.target].avatar}.png`
+        } else {
+          return `statics/avatar-img/${this.user.avatar}.png`
+        }
+      },
+      receiveMsg() {
+        this.$socket.removeAllListeners()
+        this.$socket.on('receiveMsg', data => {
+          console.log('receiveMsg at chat')
+          this.receiveData = data
+        })
+      },
+      readMsg() {
+        const from = this.target
+        this.$axios
+          .post('/user/readMsg', {
+            from
+          })
+          .then(res => {
+            if (res.data.status === 0) {
+              this.readNum = res.data.result.num
+            }
+          })
+      },
+      ...mapMutations('chat', ['setChatMsg'])
+    },
+    watch: {
+      receiveData() {
+        console.log(1)
+        this.chatMsg.push(this.receiveData)
+        this.setChatMsg(this.chatMsg)
+      }
+    }
+  }
+</script>
+
+<style>
+</style>

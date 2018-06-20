@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="row justify-center">
+  <div class="row justify-center">
     <q-toolbar>
       <q-btn round dense icon="arrow_back" @click="back"></q-btn>
       <q-toolbar-title>信息完善页</q-toolbar-title>
@@ -42,7 +42,7 @@
         <q-btn color="primary" class="full-width" @click="saveInfo">保存</q-btn>
       </q-field>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script>
