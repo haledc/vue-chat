@@ -6,7 +6,8 @@ module.exports = function (ctx) {
     plugins: [
       'i18n',
       'axios',
-      'vuelidate'
+      'vuelidate',
+      'vue-socket.io'
     ],
     css: [
       'app.styl'
@@ -53,7 +54,22 @@ module.exports = function (ctx) {
         'QInput',
         'QRadio',
         'QToolbar',
-        'QToolbarTitle'
+        'QToolbarTitle',
+        'QLayout',
+        'QLayoutHeader',
+        'QLayoutFooter',
+        'QPage',
+        'QPageContainer',
+        'QTabs',
+        'QRouteTab',
+        'QCardSeparator',
+        'QCard',
+        'QItem',
+        'QItemSide',
+        'QItemMain',
+        'QItemTile',
+        'QIcon',
+        'QChatMessage'
       ],
       directives: [
         'Ripple'
