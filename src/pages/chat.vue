@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="Lhh lpR ffr">
+  <q-layout view="hHh Lpr lFf">
     <q-layout-header view="Hff">
       <q-toolbar>
         <q-btn icon="arrow_back" round dense @click="back"></q-btn>
@@ -9,7 +9,9 @@
     <q-page-container>
       <q-page padding class="q-mx-sm">
         <div v-for="(msg, i) in filterList"
-             :key="i">
+             :key="i"
+             ref="chatList"
+        >
           <q-chat-message
             v-show="msg.from === target"
             bgColor="teal"
@@ -20,7 +22,7 @@
             v-show="msg.from === user._id"
             :sent="true"
             textColor="white"
-            bgColor="primary"
+            bgColor="black"
             :text="[msg.content]"
             :avatar="setAvatar(msg.from)"
           />
@@ -29,8 +31,12 @@
     </q-page-container>
     <q-layout-footer :reveal="false">
       <q-toolbar>
-        <q-btn icon="arrow_back" round dense @click="back"></q-btn>
-        <q-toolbar-title class="text-center">{{targetName}}</q-toolbar-title>
+        <q-btn icon="volume_up" round dense></q-btn>
+        <q-item-main class="q-mx-sm">
+          <q-input placeholder="请输入..." v-model="message"></q-input>
+        </q-item-main>
+        <q-btn icon="mood" round dense></q-btn>
+        <q-btn icon="send" round dense @click="sendMsg"></q-btn>
       </q-toolbar>
     </q-layout-footer>
   </q-layout>
@@ -45,8 +51,7 @@
         message: '',
         target: '',
         readNum: 0,
-        receiveData: '',
-        msg1: '123456'
+        receiveData: ''
       }
     },
     created() {
@@ -71,6 +76,7 @@
         this.$router.back()
       },
       sendMsg() {
+        console.log(1)
         const from = this.user._id
         if (this.message.trim()) {
           this.$socket.emit('sendMsg', {from, to: this.target, msg: this.message})
@@ -87,7 +93,6 @@
       receiveMsg() {
         this.$socket.removeAllListeners()
         this.$socket.on('receiveMsg', data => {
-          console.log('receiveMsg at chat')
           this.receiveData = data
         })
       },
