@@ -1,5 +1,5 @@
 <template>
-  <q-layout>
+  <q-layout view="hHh Lpr lFf">
     <q-layout-header>
       <q-toolbar>
         <q-toolbar-title class="text-center">{{toolTitle}}</q-toolbar-title>
@@ -10,7 +10,8 @@
     </q-page-container>
     <q-layout-footer class="col-xs-12">
       <q-tabs glossy align="justify" class="shadow-2" v-model="activeTab">
-        <q-route-tab exact v-if="user.type === 'boss' " slot="title" icon="accessibility" label="牛人" to="/dashboard/genius"/>
+        <q-route-tab exact v-if="user.type === 'boss' " slot="title" icon="accessibility" label="牛人"
+                     to="/dashboard/genius"/>
         <q-route-tab exact v-else slot="title" icon="accessibility" label="BOSS" to="/dashboard/boss"/>
         <q-route-tab exact slot="title" :alert="alert" icon="message" label="消息" to="/dashboard/msg"/>
         <q-route-tab exact slot="title" icon="perm_identity" label="个人" to="/dashboard/user-center"/>
@@ -26,7 +27,6 @@
     data() {
       return {
         activeTab: '',
-        alert: false,
         receiveData: '',
         routerList: [
           {
@@ -61,8 +61,14 @@
         const target = this.routerList.find(item => ('/dashboard' + item.path === path))
         return target.title
       },
+      alert() {
+        if (this.msgList.length === 0) {
+          return false
+        }
+        return this.msgList[0].filter(it => !it.isRead && it.to === this.user._id).length > 0
+      },
       ...mapGetters('user', ['user']),
-      ...mapGetters('chat', ['chatMsg'])
+      ...mapGetters('chat', ['chatMsg', 'msgList'])
     },
     methods: {
       getTargetList() {
