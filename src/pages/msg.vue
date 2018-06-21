@@ -1,13 +1,73 @@
 <template>
   <q-page padding>
-   2222
+    <q-card
+      class="q-mb-sm"
+      v-for="chat in msgList"
+      :key="chat[chat.length - 1]._id"
+      @click.native="readMsg(chat)"
+    >
+      <q-item>
+        <q-item-side :avatar="'statics/avatar-img/'+ getTarget(chat).avatar +'.png'"></q-item-side>
+        <q-item-main>
+          <q-item-tile label>{{getTarget(chat).name}}</q-item-tile>
+          <q-item-tile sublabel lines="1">{{chat[chat.length - 1].content}}</q-item-tile>
+        </q-item-main>
+        <q-item-side>
+          <q-btn
+            color="red"
+            round
+            dense
+            size="sm"
+            v-show="chat.filter(item => !item.isRead && item.to === user._id).length"
+          >
+          {{chat.filter(item => (!item.isRead && item.to === user._id)).length}}
+          </q-btn>
+          <q-btn icon="chevron_right" flat dense round/>
+        </q-item-side>
+      </q-item>
+    </q-card>
   </q-page>
 </template>
 
 <script>
-export default {
-  // name: 'PageName',
-}
+  import {mapGetters, mapMutations} from 'vuex'
+
+  export default {
+    data() {
+      return {
+        readNum: 0
+      }
+    },
+    computed: {
+      ...mapGetters('user', ['user', 'targetInfo']),
+      ...mapGetters('chat', ['msgList'])
+    },
+    methods: {
+      readMsg(chat) {
+        const lastItem = chat[chat.length - 1]
+        // 通过判断发送信息的对象来获取聊天对象
+        // 如果是用户自己发的，那么接受的对象(to)就是聊天对象
+        // 如果不是用户发到，那么发送的对象(from)就是聊天对象
+        const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
+        this.$axios
+          .post('/user/readMsg', {
+            from
+          })
+          .then(res => {
+            if (res.data.status === 0) {
+              this.readNum = res.data.result.num
+              this.$router.push(`/chat/${from}`)
+            }
+          })
+      },
+      getTarget(chat) {
+        const lastItem = chat[chat.length - 1]
+        const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
+        return this.targetInfo[from]
+      },
+      ...mapMutations('chat', ['setChatMsg'])
+    }
+  }
 </script>
 
 <style>
