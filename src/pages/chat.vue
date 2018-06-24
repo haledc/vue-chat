@@ -46,16 +46,17 @@
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
+    props: {
+      target: String
+    },
     data() {
       return {
         message: '',
-        target: '',
         readNum: 0,
         receiveData: ''
       }
     },
     created() {
-      this.target = this.$route.params.target
       this.receiveMsg()
     },
     beforeDestroy() {
