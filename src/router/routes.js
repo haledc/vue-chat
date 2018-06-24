@@ -5,7 +5,7 @@ export default [
 
   {path: '/register', component: () => import('pages/register')},
 
-  {path: '/update-info/:type', component: () => import('pages/update-info')},
+  {path: '/update-info/:type', props: true, component: () => import('pages/update-info')},
 
   {
     path: '/dashboard',
@@ -18,7 +18,7 @@ export default [
     ]
   },
 
-  {path: '/chat/:target', component: () => import('pages/chat')},
+  {path: '/chat/:target', props: true, component: () => import('pages/chat')},
 
   {path: '*', component: () => import('pages/404')}
 ]
