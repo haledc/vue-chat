@@ -51,6 +51,9 @@
   import {mapMutations} from 'vuex'
 
   export default {
+    props: {
+      type: String
+    },
     data() {
       return {
         form: {
@@ -60,8 +63,7 @@
           salary: '',
           desc: ''
         },
-        avatarUrl: '',
-        type: ''
+        avatarUrl: ''
       }
     },
     validations: {
@@ -82,9 +84,6 @@
           required
         }
       }
-    },
-    created() {
-      this.type = this.$route.params.type
     },
     methods: {
       back() {
