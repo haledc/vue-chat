@@ -97,6 +97,7 @@
         this.$v.form.$touch()
         if (this.$v.form.$error) {
           this.$q.notify('请检查输入的内容')
+          return
         }
         this.$axios
           .post('/user/update', {
@@ -111,7 +112,7 @@
               const userData = res.data.result
               this.setUser(userData)
               const target = userData.type === 'boss' ? 'genius' : 'boss'
-              this.$router.push(`${target}`)
+              this.$router.push(`/dashboard/${target}`)
             }
           })
       },
