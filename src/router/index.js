@@ -25,7 +25,7 @@ const Router = new VueRouter({
 
 Router.beforeEach((to, from, next) => {
   if (!Cookies.get('userId')) {
-    if (to.path === '/login' || to.path === '/register') {
+    if (to.path === '/login' || to.path === '/register' || to.name === 'update-info') {
       next()
     } else {
       next('/login')
