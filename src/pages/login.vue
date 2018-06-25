@@ -78,7 +78,6 @@
           })
       },
       goRegister() {
-        console.log(1)
         this.$router.push('/register')
       },
       ...mapMutations('user', ['setUser'])
