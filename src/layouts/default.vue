@@ -59,7 +59,9 @@
       toolTitle() {
         const path = this.$route.path
         const target = this.routerList.find(item => ('/dashboard' + item.path === path))
-        return target.title
+        if (target) {
+          return target.title
+        }
       },
       alert() {
         if (this.msgList.length === 0) {
