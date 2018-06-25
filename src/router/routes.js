@@ -5,7 +5,12 @@ export default [
 
   {path: '/register', component: () => import('pages/register')},
 
-  {path: '/update-info/:type', props: true, component: () => import('pages/update-info')},
+  {
+    path: '/update-info/:type',
+    props: true,
+    name: 'update-info',
+    component: () => import('pages/update-info')
+  },
 
   {
     path: '/dashboard',
