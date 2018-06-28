@@ -95,7 +95,6 @@
       receiveMsg() {
         this.$socket.removeAllListeners()
         this.$socket.on('receiveMsg', data => {
-          console.log('receiveMsg at dashboard')
           this.receiveData = data
         })
       },

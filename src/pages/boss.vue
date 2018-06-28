@@ -36,11 +36,7 @@
     },
     methods: {
       goChat(target) {
-        this.$router.push(`/chat/${target._id}`, () => {
-          console.log('跳转成功')
-        }, () => {
-          console.log('跳转相同的路由')
-        })
+        this.$router.push(`/chat/${target._id}`)
       }
     }
   }

@@ -77,7 +77,6 @@
         this.$router.back()
       },
       sendMsg() {
-        console.log(1)
         const from = this.user._id
         if (this.message.trim()) {
           this.$socket.emit('sendMsg', {from, to: this.target, msg: this.message})
@@ -113,7 +112,6 @@
     },
     watch: {
       receiveData() {
-        console.log(1)
         this.chatMsg.push(this.receiveData)
         this.setChatMsg(this.chatMsg)
       }

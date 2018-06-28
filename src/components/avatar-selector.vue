@@ -38,8 +38,6 @@
     },
     methods: {
       selectItem(url) {
-        console.log(1)
-        console.log(url)
         this.$emit('select', url)
       }
     }
