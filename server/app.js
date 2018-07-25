@@ -1,6 +1,8 @@
 const Koa = require('koa')
 const bodyParse = require('koa-bodyparser')
 const logger = require('koa-logger')
+const serve = require('koa-static')
+const path = require('path')
 
 const routers = require('./routes')
 require('./db/index')
@@ -22,9 +24,12 @@ io.on('connection', async socket => {
 
 app.use(logger())
 app.use(bodyParse())
+app.use(serve(path.join(__dirname, './static/spa-mat')))
 
 app.use(routers.routes()).use(routers.allowedMethods())
 
-server.listen(3000, () => {
-  console.log(`Server Start at port 3000 at ${new Date()}`)
+const PORT = process.env.PORT || 9092
+
+server.listen(PORT, () => {
+  console.log(`Server Start at port ${PORT} at ${new Date()}`)
 })
