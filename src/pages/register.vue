@@ -33,7 +33,8 @@
         <q-radio v-model="form.type" label="牛人" val="genius" color="teal"></q-radio>
       </q-field>
       <q-field class="q-mt-lg">
-        <q-btn color="primary" class="full-width" @click="Register">注册</q-btn>
+        <q-btn color="primary" class="full-width q-mb-md" @click="registerUser">注册</q-btn>
+        <q-btn color="teal" class="full-width" @click="goLogin">登录</q-btn>
       </q-field>
     </div>
   </div>
@@ -41,6 +42,7 @@
 
 <script>
   import {required, minLength, sameAs} from 'vuelidate/lib/validators'
+  import {mapActions} from 'vuex'
 
   export default {
     data() {
@@ -71,23 +73,25 @@
       }
     },
     methods: {
-      Register() {
+      registerUser() {
         this.$v.form.$touch()
         if (this.$v.form.$error) {
           this.$q.notify('请检查输入的内容')
+          return
         }
-        this.$axios
-          .post('/user/register', {
-            username: this.form.username,
-            password: this.form.password,
-            type: this.form.type
+        this.register({
+          username: this.form.username,
+          password: this.form.password,
+          type: this.form.type
+        })
+          .then(() => {
+            this.$router.push(`/update-info/${this.form.type}`)
           })
-          .then(res => {
-            if (res.data.status === 0) {
-              this.$router.push(`/update-info/${this.form.type}`)
-            }
-          })
-      }
+      },
+      goLogin() {
+        this.$router.push('/login')
+      },
+      ...mapActions('user', ['register'])
     }
   }
 </script>

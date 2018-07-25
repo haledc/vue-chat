@@ -48,7 +48,7 @@
 <script>
   import {required} from 'vuelidate/lib/validators'
   import AvatarSelector from '../components/avatar-selector'
-  import {mapMutations} from 'vuex'
+  import {mapActions} from 'vuex'
 
   export default {
     props: {
@@ -99,24 +99,23 @@
           this.$q.notify('请检查输入的内容')
           return
         }
-        this.$axios
-          .post('/user/update', {
-            avatar: this.form.avatar,
-            company: this.form.company,
-            title: this.form.title,
-            salary: this.form.salary,
-            desc: this.form.desc
-          })
-          .then(res => {
-            if (res.data.status === 0) {
-              const userData = res.data.result
-              this.setUser(userData)
-              const target = userData.type === 'boss' ? 'genius' : 'boss'
-              this.$router.push(`/dashboard/${target}`)
+        this.updateInfo({
+          avatar: this.form.avatar,
+          company: this.form.company,
+          title: this.form.title,
+          salary: this.form.salary,
+          desc: this.form.desc
+        })
+          .then(data => {
+            if (!data.avatar) {
+              this.$router.replace(`/update-info/${data.type}`)
+            } else {
+              const target = data.type === 'boss' ? 'genius' : 'boss'
+              this.$router.replace(`/dashboard/${target}`)
             }
           })
       },
-      ...mapMutations('user', ['setUser'])
+      ...mapActions('user', ['updateInfo'])
     },
     components: {
       AvatarSelector

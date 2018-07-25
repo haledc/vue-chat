@@ -1,3 +1,5 @@
+import api from '../../assets/api'
+
 const state = {
   chatMsg: JSON.parse(window.localStorage.getItem('chat_chatMsg')) || []
 }
@@ -23,9 +25,22 @@ const mutations = {
   }
 }
 
+const actions = {
+  getChatMsg: ({commit}) => {
+    api.getChatMsg()
+      .then(data => {
+        commit('setChatMsg', data.chat)
+      })
+  },
+  readMsg: ({commit}, {from}) => {
+    api.readMsg(from)
+  }
+}
+
 export default {
   namespaced: true,
   state,
   getters,
-  mutations
+  mutations,
+  actions
 }

@@ -10,7 +10,6 @@
       <q-page padding class="q-mx-sm">
         <div v-for="(msg, i) in filterList"
              :key="i"
-             ref="chatList"
         >
           <q-chat-message
             v-show="msg.from === target"
@@ -22,7 +21,7 @@
             v-show="msg.from === user._id"
             :sent="true"
             textColor="white"
-            bgColor="black"
+            bgColor="info"
             :text="[msg.content]"
             :avatar="setAvatar(msg.from)"
           />
@@ -33,7 +32,11 @@
       <q-toolbar>
         <q-btn icon="volume_up" round dense></q-btn>
         <q-item-main class="q-mx-sm">
-          <q-input placeholder="请输入..." v-model="message"></q-input>
+          <q-input
+            placeholder="请输入..."
+            v-model="message"
+            @keyup.enter="sendMsg"
+          ></q-input>
         </q-item-main>
         <q-btn icon="mood" round dense></q-btn>
         <q-btn icon="send" round dense @click="sendMsg"></q-btn>
@@ -43,7 +46,7 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     props: {
@@ -59,8 +62,14 @@
     created() {
       this.receiveMsg()
     },
-    beforeDestroy() {
-      this.readMsg(this.target)
+    updated() {
+      console.log(this.lastItem)
+    },
+    deactivated() {
+      this.readMsg({
+        from: this.target
+      })
+      this.updateChat()
     },
     computed: {
       targetName() {
@@ -96,19 +105,11 @@
           this.receiveData = data
         })
       },
-      readMsg() {
-        const from = this.target
-        this.$axios
-          .post('/user/readMsg', {
-            from
-          })
-          .then(res => {
-            if (res.data.status === 0) {
-              this.readNum = res.data.result.num
-            }
-          })
+      updateChat() {
+        this.getChatMsg()
       },
-      ...mapMutations('chat', ['setChatMsg'])
+      ...mapMutations('chat', ['setChatMsg']),
+      ...mapActions('chat', ['readMsg', 'getChatMsg'])
     },
     watch: {
       receiveData() {

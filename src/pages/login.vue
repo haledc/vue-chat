@@ -18,10 +18,11 @@
           type="password"
           @blur="$v.form.password.$touch"
           :error="$v.form.password.$error"
+          @keyup.enter="onLogin"
         />
       </q-field>
       <q-field class="q-mt-lg">
-        <q-btn color="primary" class="full-width q-mb-md" @click="login">登录</q-btn>
+        <q-btn color="primary" class="full-width q-mb-md" @click="onLogin">登录</q-btn>
         <q-btn color="teal" class="full-width" @click="goRegister">注册</q-btn>
       </q-field>
     </div>
@@ -30,7 +31,7 @@
 
 <script>
   import {required, minLength} from 'vuelidate/lib/validators'
-  import {mapMutations} from 'vuex'
+  import {mapActions} from 'vuex'
 
   export default {
     data() {
@@ -54,33 +55,29 @@
       }
     },
     methods: {
-      login() {
+      onLogin() {
         this.$v.form.$touch()
         if (this.$v.form.$error) {
           this.$q.notify('请检查输入的内容')
+          return
         }
-        this.$axios
-          .post('/user/login', {
-            username: this.form.username,
-            password: this.form.password
-          })
-          .then(res => {
-            if (res.data.status === 0) {
-              const userData = res.data.result
-              this.setUser(userData)
-              if (!userData.avatar) {
-                this.$router.push(`/update-info/${userData.type}`)
-              } else {
-                const target = userData.type === 'boss' ? 'genius' : 'boss'
-                this.$router.push(`/dashboard/${target}`)
-              }
+        this.login({
+          username: this.form.username,
+          password: this.form.password
+        })
+          .then(data => {
+            if (!data.avatar) {
+              this.$router.replace(`/update-info/${data.type}`)
+            } else {
+              const target = data.type === 'boss' ? 'genius' : 'boss'
+              this.$router.replace(`/dashboard/${target}`)
             }
           })
       },
       goRegister() {
         this.$router.push('/register')
       },
-      ...mapMutations('user', ['setUser'])
+      ...mapActions('user', ['login'])
     }
   }
 </script>

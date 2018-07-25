@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import {mapMutations, mapGetters} from 'vuex'
+  import {mapMutations, mapGetters, mapActions} from 'vuex'
 
   export default {
     data() {
@@ -51,8 +51,8 @@
     created() {
       // 根据路径获取活动按钮的值
       this.activeTab = this.$route.path.split('/')[2]
-      this.getTargetList()
-      this.getChatMsg()
+      this.onGetTargetList()
+      this.onGetChatMsg()
       this.receiveMsg()
     },
     computed: {
@@ -73,24 +73,12 @@
       ...mapGetters('chat', ['chatMsg', 'msgList'])
     },
     methods: {
-      getTargetList() {
+      onGetTargetList() {
         const type = this.user.type === 'boss' ? 'genius' : 'boss'
-        this.$axios
-          .get(`/user/list?type=${type}`)
-          .then(res => {
-            if (res.data.status === 0) {
-              this.setTargetList(res.data.result)
-            }
-          })
+        this.getTargetList(type)
       },
-      getChatMsg() {
-        this.$axios
-          .get('/user/chatMsg')
-          .then(res => {
-            if (res.data.status === 0) {
-              this.setChatMsg(res.data.result.chat)
-            }
-          })
+      onGetChatMsg() {
+        this.getChatMsg()
       },
       receiveMsg() {
         this.$socket.removeAllListeners()
@@ -99,7 +87,9 @@
         })
       },
       ...mapMutations('user', ['setTargetList']),
-      ...mapMutations('chat', ['setChatMsg'])
+      ...mapMutations('chat', ['setChatMsg']),
+      ...mapActions('user', ['getTargetList']),
+      ...mapActions('chat', ['getChatMsg'])
     },
     watch: {
       // 监听路由变化，调整activeBtn的值(解决导航守卫的跳转时出现的bug)

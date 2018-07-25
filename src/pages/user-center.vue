@@ -31,7 +31,7 @@
       <q-card-separator/>
       <q-item>
         <q-item-main>
-          <q-btn class="full-width" color="primary" @click="logout">注销</q-btn>
+          <q-btn class="full-width" color="primary" @click="onLogout">注销</q-btn>
         </q-item-main>
       </q-item>
     </q-card>
@@ -39,25 +39,25 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
 
   export default {
     computed: {
       ...mapGetters('user', ['user'])
     },
     methods: {
-      logout() {
-        this.$axios
-          .post('/user/logout')
-          .then(res => {
-            if (res.data.status === 0) {
+      onLogout() {
+        this.logout()
+          .then(() => {
+            setTimeout(() => {
               this.$router.push('/login')
-              window.localStorage.removeItem('chat_user')
-              window.localStorage.removeItem('chat_targetList')
-              window.localStorage.removeItem('chat_chatMsg')
-            }
+            }, 20)
+            window.localStorage.removeItem('chat_user')
+            window.localStorage.removeItem('chat_targetList')
+            window.localStorage.removeItem('chat_chatMsg')
           })
-      }
+      },
+      ...mapActions('user', ['logout'])
     }
   }
 </script>
