@@ -4,17 +4,22 @@
   "main": "index.js",
   "author": "Hale",
   "license": "MIT",
+  "scripts": {
+    "serve": "nodemon app.js"
+  },
   "dependencies": {
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
     "mongoose": "^5.1.4",
     "socket.io": "^2.1.1",
     "utility": "^1.13.1"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "nodemon": "^1.18.3"
   }
 }
