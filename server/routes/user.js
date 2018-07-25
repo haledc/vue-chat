@@ -11,38 +11,44 @@ const findFilter = {
   __v: 0
 }
 
+const successResponse = data => {
+  return {
+    success: true,
+    result: data
+  }
+}
+
+const errorResponse = msg => {
+  return {
+    success: false,
+    message: msg
+  }
+}
+
 router.post('/register', async ctx => {
   try {
     const {username, password, type} = ctx.request.body
     const exist = await User.findOne({username})
     if (exist) {
-      ctx.body = {
-        status: 1,
-        msg: '用户名重复'
-      }
+      ctx.status = 400
+      ctx.body = errorResponse('用户名重复')
       return
     }
 
     const userModel = new User({username, password: md5Pwd(password), type})
     const user = await userModel.save()
-    const {username1, type1, _id} = user
-    // ctx.cookies.set('userId', _id, {
-    //   httpOnly: false
-    // })
-    ctx.body = {
-      status: 0,
-      result: {username1, type1, _id}
-    }
+    const {_id} = user
+    ctx.cookies.set('userId', _id, {
+      httpOnly: false
+    })
+    ctx.body = successResponse({_id})
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
-
 })
 
-router.post('/update', async ctx => {
+router.post('/updateInfo', async ctx => {
   try {
     const updateData = ctx.request.body
     const userId = ctx.cookies.get('userId')
@@ -51,15 +57,10 @@ router.post('/update', async ctx => {
       username: user.username,
       type: user.type
     }, updateData)
-    ctx.body = {
-      status: 0,
-      result: data
-    }
+    ctx.body = successResponse(data)
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
 })
 
@@ -67,37 +68,10 @@ router.get('/list', async ctx => {
   try {
     const {type} = ctx.query
     const userList = await User.find({type}, findFilter)
-    ctx.body = {
-      status: 0,
-      result: userList
-    }
+    ctx.body = successResponse(userList)
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
-  }
-})
-
-router.get('/info', async ctx => {
-  try {
-    const userId = ctx.cookies.get('userId')
-    if (!userId) {
-      ctx.body = {
-        status: 1
-      }
-      return
-    }
-    const user = await User.findOne({_id: userId}, findFilter)
-    ctx.body = {
-      status: 0,
-      result: user
-    }
-  } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
 })
 
@@ -106,9 +80,7 @@ router.post('/logout', async ctx => {
     path: '/',
     maxAge: -1
   })
-  ctx.body = {
-    status: 0
-  }
+  ctx.body = successResponse('注销成功')
 })
 
 router.post('/login', async ctx => {
@@ -122,21 +94,14 @@ router.post('/login', async ctx => {
       ctx.cookies.set('userId', user._id, {
         httpOnly: false
       })
-      ctx.body = {
-        status: 0,
-        result: user,
-      }
+      ctx.body = successResponse(user)
     } else {
-      ctx.body = {
-        status: 1,
-        msg: '用户名或者密码不正确！'
-      }
+      ctx.status = 400
+      ctx.body = errorResponse('用户名或者密码不正确！')
     }
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
 })
 
@@ -154,18 +119,10 @@ router.get('/chatMsg', async ctx => {
         {to: userId}
       ]
     })
-    ctx.body = {
-      status: 0,
-      result: {
-        chat,
-        users
-      }
-    }
+    ctx.body = successResponse({chat, users})
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
 })
 
@@ -173,7 +130,7 @@ router.post('/readMsg', async ctx => {
   try {
     const userId = ctx.cookies.get('userId')
     const {from} = ctx.request.body
-    console.log(from)
+    console.log(from, ctx.request.body)
     const chat = await Chat.update({from, to: userId}, {
       '$set': {
         isRead: true
@@ -181,18 +138,12 @@ router.post('/readMsg', async ctx => {
     }, {
       multi: true
     })
-    console.log(chat)
-    ctx.body = {
-      status: 0,
-      result: {
-        num: chat.nModified
-      }
-    }
+    ctx.body = successResponse({
+      num: chat.nModified
+    })
   } catch (err) {
-    ctx.body = {
-      status: 1,
-      msg: err.message
-    }
+    ctx.status = 500
+    ctx.body = errorResponse(err.message)
   }
 })
 
