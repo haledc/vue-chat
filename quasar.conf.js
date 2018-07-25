@@ -38,11 +38,11 @@ module.exports = function (ctx) {
     },
     devServer: {
       // https: true,
-      // port: 8080,
+      port: 8082,
       open: false, // opens browser window automatically
       proxy: {
         '/user/*': {
-          target: 'http://127.0.0.1:3000'
+          target: 'http://127.0.0.1:9092'
         }
       }
     },
