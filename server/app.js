@@ -26,7 +26,7 @@ io.on('connection', async socket => {
 app.use(history())
 app.use(logger())
 app.use(bodyParse())
-app.use(serve(path.join(__dirname, './static/spa-mat')))
+app.use(serve(path.join(__dirname, './static')))
 
 app.use(routers.routes()).use(routers.allowedMethods())
 
