@@ -22,7 +22,7 @@
 
 ### 安装和启动
 
-```bash
+```b
 # 安装前端依赖和启动前端服务
 yarn install && quasar dev
 
@@ -33,3 +33,12 @@ yarn install && yarn serve
 # 前端生产环境代码打包
 quasar build
 ```
+
+### 图片
+
+![](http://p5j8134h3.bkt.clouddn.com/quasar-chat-show.png)
+
+
+
+
+
