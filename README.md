@@ -1,20 +1,35 @@
 # quasar-chat
 
-> A Vue.js project by quasar-framework
+> A  Vue.js project using quasar-framework
 
-## Build Setup
+### 技术栈
 
-``` bash
-# install dependencies
-yarn install
+**vue全家桶 + quasar-cli + socket.io + koa + mongoDB**
 
-# serve with hot reload at localhost:8080
-quasar dev
+### 项目结构
 
-cd server && yarn install
-node app.js
+```bash
+|—— src              前端相关代码
+|—— server           后端相关代码
+...                  其他
+|—— quasar.conf.js   quasar框架主要配置
+```
 
-# build for production with minification
+### 说明
+
+- 灵感来源于一个react课程，自己用 vue 和 quasar-cli  (一个非常丰富的UI组件库)重构了该项目。
+- 这是一个求职和招聘人员的简单聊天的app应用。[演示地址](http://chat.haledeng.com)
+
+### 安装和启动
+
+```bash
+# 安装前端依赖和启动前端服务
+yarn install && quasar dev
+
+# 安装后端依赖和启动后端服务
+cd server
+yarn install && yarn serve
+
+# 前端生产环境代码打包
 quasar build
-
 ```
