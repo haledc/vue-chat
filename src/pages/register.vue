@@ -84,8 +84,12 @@
           password: this.form.password,
           type: this.form.type
         })
-          .then(() => {
-            this.$router.push(`/update-info/${this.form.type}`)
+          .then(data => {
+            if (data.status === 0) {
+              this.$router.push(`/update-info/${this.form.type}`)
+            } else if (data.status === 1) {
+              this.$q.notify(data.message)
+            }
           })
       },
       goLogin() {

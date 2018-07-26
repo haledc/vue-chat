@@ -30,7 +30,9 @@ const actions = {
   getChatMsg: ({commit}) => {
     api.getChatMsg()
       .then(data => {
-        commit('setChatMsg', data.chat)
+        if (data.status === 0) {
+          commit('setChatMsg', data.result)
+        }
       })
   },
   readMsg: ({commit}, {from}) => {

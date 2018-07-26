@@ -62,7 +62,7 @@
     created() {
       this.receiveMsg()
     },
-    deactivated() {
+    beforeDestroy() {
       this.readMsg({
         from: this.target
       })

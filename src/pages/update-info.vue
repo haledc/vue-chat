@@ -11,8 +11,8 @@
           v-show="type==='boss'"
           float-label="公司名称"
           v-model="form.company"
-          @blur="$v.form.company.$touch"
-          :error="$v.form.company.$error"
+          @blur="type==='boss' ? $v.form.company.$touch : null"
+          :error="type==='boss' ? $v.form.company.$error : false"
           class="q-mb-sm"
         />
         <q-input
@@ -26,8 +26,8 @@
           v-show="type==='boss'"
           float-label="职位薪资"
           v-model="form.salary"
-          @blur="$v.form.salary.$touch"
-          :error="$v.form.salary.$error"
+          @blur="type === 'boss' ? $v.form.salary.$touch : null"
+          :error="type==='boss' ? $v.form.salary.$error : false"
           class="q-mb-sm"
         />
         <q-input
@@ -39,7 +39,7 @@
         />
       </q-field>
       <q-field class="q-mt-lg">
-        <q-btn color="primary" class="full-width" @click="saveInfo">保存</q-btn>
+        <q-btn color="primary" class="full-width" @click="saveInfo">保存并登录</q-btn>
       </q-field>
     </div>
   </div>
@@ -52,7 +52,8 @@
 
   export default {
     props: {
-      type: String
+      type: String,
+      required: true
     },
     data() {
       return {
@@ -66,27 +67,47 @@
         avatarUrl: ''
       }
     },
-    validations: {
-      form: {
-        avatar: {
-          required
-        },
-        company: {
-          required
-        },
-        title: {
-          required
-        },
-        salary: {
-          required
-        },
-        desc: {
-          required
+    validations() {
+      // 根据条件决定检查的选项
+      if (this.type === 'boss') {
+        return {
+          form: {
+            avatar: {
+              required
+            },
+            company: {
+              required
+            },
+            title: {
+              required
+            },
+            salary: {
+              required
+            },
+            desc: {
+              required
+            }
+          }
+        }
+      } else {
+        return {
+          form: {
+            avatar: {
+              required
+            },
+            title: {
+              required
+            },
+            desc: {
+              required
+            }
+          }
         }
       }
     },
     methods: {
       back() {
+        this.$q.cookies.remove('userId')
         this.$router.back()
       },
       selectAvatar(targer) {
@@ -95,8 +116,9 @@
       },
       saveInfo() {
         this.$v.form.$touch()
+        console.log(this.$v.form)
         if (this.$v.form.$error) {
-          this.$q.notify('请检查输入的内容')
+          this.$q.notify('请填写完整信息')
           return
         }
         this.updateInfo({
@@ -107,11 +129,12 @@
           desc: this.form.desc
         })
           .then(data => {
-            if (!data.avatar) {
-              this.$router.replace(`/update-info/${data.type}`)
-            } else {
-              const target = data.type === 'boss' ? 'genius' : 'boss'
+            if (data.status === 0) {
+              const type = data.result.type
+              const target = type === 'boss' ? 'genius' : 'boss'
               this.$router.replace(`/dashboard/${target}`)
+            } else if (data.status === 1) {
+              this.$q.notify(data.message)
             }
           })
       },

@@ -66,12 +66,20 @@
           password: this.form.password
         })
           .then(data => {
-            if (!data.avatar) {
-              this.$router.replace(`/update-info/${data.type}`)
-            } else {
-              const target = data.type === 'boss' ? 'genius' : 'boss'
-              this.$router.replace(`/dashboard/${target}`)
+            if (data.status === 0) {
+              if (!data.result.avatar) {
+                this.$router.push(`/update-info/${data.result.type}`)
+                this.$q.notify('请补充完善信息')
+              } else {
+                const target = data.result.type === 'boss' ? 'genius' : 'boss'
+                this.$router.replace(`/dashboard/${target}`)
+              }
+            } else if (data.status === 1) {
+              this.$q.notify(data.message)
             }
+          })
+          .catch(err => {
+            this.$q.notify(err.message)
           })
       },
       goRegister() {

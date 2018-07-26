@@ -15,9 +15,16 @@ const handleRequest = (request) => {
           return reject(createError(400, 'no result'))
         }
         if (!data.success) {
-          reject(createError(400, data.message))
+          // reject(createError(400, data.message))
+          resolve({
+            status: 1,
+            message: data.message
+          })
         }
-        resolve(data.result)
+        resolve({
+          status: 0,
+          result: data.result
+        })
       })
       .catch(err => {
         const res = err.response
