@@ -3,6 +3,7 @@ const bodyParse = require('koa-bodyparser')
 const logger = require('koa-logger')
 const serve = require('koa-static')
 const path = require('path')
+const history = require('koa2-connect-history-api-fallback')
 
 const routers = require('./routes')
 require('./db/index')
@@ -22,6 +23,7 @@ io.on('connection', async socket => {
   })
 })
 
+app.use(history())
 app.use(logger())
 app.use(bodyParse())
 app.use(serve(path.join(__dirname, './static/spa-mat')))
