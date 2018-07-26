@@ -52,9 +52,7 @@
             setTimeout(() => {
               this.$router.push('/login')
             }, 20)
-            window.localStorage.removeItem('chat_user')
-            window.localStorage.removeItem('chat_targetList')
-            window.localStorage.removeItem('chat_chatMsg')
+            this.$q.localStorage.clear()
           })
       },
       ...mapActions('user', ['logout'])
