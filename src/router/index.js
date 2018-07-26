@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Cookies from 'js-cookie'
+import {Cookies} from 'quasar'
 
 import routes from './routes'
 

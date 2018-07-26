@@ -1,7 +1,8 @@
 import api from '../../assets/api'
+import {LocalStorage} from 'quasar'
 
 const state = {
-  chatMsg: JSON.parse(window.localStorage.getItem('chat_chatMsg')) || []
+  chatMsg: LocalStorage.get.item('chat_chatMsg') || []
 }
 const getters = {
   chatMsg: state => state.chatMsg,
@@ -21,7 +22,7 @@ const getters = {
 const mutations = {
   setChatMsg: (state, list) => {
     state.chatMsg = list
-    window.localStorage.setItem('chat_chatMsg', JSON.stringify(list))
+    LocalStorage.set('chat_chatMsg', list)
   }
 }
 
