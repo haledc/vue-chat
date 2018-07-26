@@ -30,8 +30,7 @@ router.post('/register', async ctx => {
     const {username, password, type} = ctx.request.body
     const exist = await User.findOne({username})
     if (exist) {
-      ctx.status = 400
-      ctx.body = errorResponse('用户名重复')
+      ctx.body = errorResponse('用户名重复,请重新输入或者去登录！')
       return
     }
 
@@ -96,7 +95,6 @@ router.post('/login', async ctx => {
       })
       ctx.body = successResponse(user)
     } else {
-      ctx.status = 400
       ctx.body = errorResponse('用户名或者密码不正确！')
     }
   } catch (err) {
@@ -108,18 +106,13 @@ router.post('/login', async ctx => {
 router.get('/chatMsg', async ctx => {
   try {
     const userId = ctx.cookies.get('userId')
-    const usersDoc = await User.find()
-    let users = {}
-    usersDoc.forEach(item => {
-      users[item._id] = {name: item.username, avatar: item.avatar}
-    })
     const chat = await Chat.find({
       '$or': [
         {from: userId},
         {to: userId}
       ]
     })
-    ctx.body = successResponse({chat, users})
+    ctx.body = successResponse(chat)
   } catch (err) {
     ctx.status = 500
     ctx.body = errorResponse(err.message)
