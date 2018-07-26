@@ -62,9 +62,6 @@
     created() {
       this.receiveMsg()
     },
-    updated() {
-      console.log(this.lastItem)
-    },
     deactivated() {
       this.readMsg({
         from: this.target
