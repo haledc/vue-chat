@@ -3,7 +3,7 @@ import axios from 'axios'
 import {createError} from '../utils'
 
 const request = axios.create({
-  baseURL: '/'
+  baseURL: '/user'
 })
 
 const handleRequest = (request) => {
@@ -37,24 +37,24 @@ const handleRequest = (request) => {
 
 export default {
   login(username, password) {
-    return handleRequest(request.post('/user/login', {username, password}))
+    return handleRequest(request.post('/login', {username, password}))
   },
   register(username, password, type) {
-    return handleRequest(request.post('/user/register', {username, password, type}))
+    return handleRequest(request.post('/register', {username, password, type}))
   },
   updateInfo(updateData) {
-    return handleRequest(request.post('/user/updateInfo', updateData))
+    return handleRequest(request.post('/updateInfo', updateData))
   },
   getTargetList(type) {
-    return handleRequest(request.get('/user/list', {params: {type}})) // 注意：params是一个对象
+    return handleRequest(request.get('/list', {params: {type}})) // 注意：params是一个对象
   },
   logout() {
-    return handleRequest(request.post('/user/logout'))
+    return handleRequest(request.post('/logout'))
   },
   getChatMsg() {
-    return handleRequest(request.get('/user/chatMsg'))
+    return handleRequest(request.get('/chatMsg'))
   },
   readMsg(from) {
-    return handleRequest(request.post('/user/readMsg', {from}))
+    return handleRequest(request.post('/readMsg', {from}))
   }
 }
