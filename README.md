@@ -1,4 +1,4 @@
-# quasar-chat
+# vue-chat
 
 > A  Vue.js project using quasar-framework
 
