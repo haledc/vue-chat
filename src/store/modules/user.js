@@ -32,43 +32,25 @@ const mutations = {
 
 const actions = {
   login: ({commit}, {username, password}) => {
-    return new Promise((resolve, reject) => {
-      api.login(username, password)
-        .then(data => {
-          if (data.status === 0) {
-            commit('doLogin', data.result)
-          }
-          resolve(data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
+    return api.login(username, password)
+      .then(data => {
+        if (data.status === 0) {
+          commit('doLogin', data.result)
+        }
+        return data
+      })
   },
   register: ({commit}, {username, password, type}) => {
-    return new Promise((resolve, reject) => {
-      api.register(username, password, type)
-        .then(data => {
-          resolve(data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
+    return api.register(username, password, type)
   },
   updateInfo: ({commit}, updateData) => {
-    return new Promise((resolve, reject) => {
-      api.updateInfo(updateData)
-        .then(data => {
-          if (data.status === 0) {
-            commit('doLogin', data.result)
-          }
-          resolve(data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
+    return api.updateInfo(updateData)
+      .then(data => {
+        if (data.status === 0) {
+          commit('doLogin', data.result)
+        }
+        return data
+      })
   },
   getTargetList: ({commit}, type) => {
     api.getTargetList(type)
@@ -78,7 +60,7 @@ const actions = {
         }
       })
   },
-  logout: ({commit}) => {
+  logout: () => {
     api.logout()
   }
 }
