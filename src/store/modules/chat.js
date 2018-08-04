@@ -36,7 +36,7 @@ const actions = {
       })
   },
   readMsg: ({commit}, {from}) => {
-    api.readMsg(from)
+    return api.readMsg(from)
   }
 }
 
