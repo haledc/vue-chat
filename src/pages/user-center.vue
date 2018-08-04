@@ -50,9 +50,7 @@
         this.logout()
           .then(() => {
             this.$q.localStorage.clear()
-            setTimeout(() => {
-              this.$router.push('/login')
-            }, 200)
+            this.$router.push('/login')
           })
       },
       ...mapActions('user', ['logout'])

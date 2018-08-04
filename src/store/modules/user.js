@@ -61,7 +61,7 @@ const actions = {
       })
   },
   logout: () => {
-    api.logout()
+    return api.logout()
   }
 }
 
