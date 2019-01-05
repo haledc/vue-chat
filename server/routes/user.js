@@ -1,9 +1,9 @@
 const Router = require('koa-router')
-const User = require('../db/models/user')
-const Chat = require('../db/models/chat')
-const utility = require('utility')
+const User = require('../database/models/user')
+const Chat = require('../database/models/chat')
+const { successResponse, failureResponse, md5Pwd } = require('../utils')
 
-const router = new Router({prefix: '/user'})
+const router = new Router({ prefix: '/user' })
 
 // 查询信息隐藏字段
 const findFilter = {
@@ -11,39 +11,23 @@ const findFilter = {
   __v: 0
 }
 
-const successResponse = data => {
-  return {
-    success: true,
-    result: data
-  }
-}
-
-const errorResponse = msg => {
-  return {
-    success: false,
-    message: msg
-  }
-}
-
 router.post('/register', async ctx => {
   try {
-    const {username, password, type} = ctx.request.body
-    const exist = await User.findOne({username})
+    const { username, password, type } = ctx.request.body
+    const exist = await User.findOne({ username })
     if (exist) {
-      ctx.body = errorResponse('用户名重复,请重新输入或者去登录！')
+      failureResponse(ctx, 200, '用户名重复,请重新输入或者去登录！')
       return
     }
-
-    const userModel = new User({username, password: md5Pwd(password), type})
-    const user = await userModel.save()
-    const {_id} = user
+    const newUser = new User({ username, password: md5Pwd(password), type })
+    const user = await newUser.save()
+    const { _id } = user
     ctx.cookies.set('userId', _id, {
       httpOnly: false
     })
-    ctx.body = successResponse({_id})
+    successResponse(ctx, { _id })
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
 
@@ -52,25 +36,24 @@ router.post('/updateInfo', async ctx => {
     const updateData = ctx.request.body
     const userId = ctx.cookies.get('userId')
     const user = await User.findByIdAndUpdate(userId, updateData)
+    const { username, type } = user
     const data = Object.assign({}, {
-      username: user.username,
-      type: user.type
+      username,
+      type
     }, updateData)
-    ctx.body = successResponse(data)
+    successResponse(ctx, data)
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
 
 router.get('/list', async ctx => {
   try {
-    const {type} = ctx.query
-    const userList = await User.find({type}, findFilter)
-    ctx.body = successResponse(userList)
+    const { type } = ctx.query
+    const userList = await User.find({ type }, findFilter)
+    successResponse(ctx, userList)
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
 
@@ -84,22 +67,28 @@ router.post('/logout', async ctx => {
 
 router.post('/login', async ctx => {
   try {
-    const {username, password} = ctx.request.body
+    const { username, password } = ctx.request.body
     const user = await User.findOne({
-      username,
-      password: md5Pwd(password)
-    }, findFilter)
-    if (user) {
-      ctx.cookies.set('userId', user._id, {
-        httpOnly: false
-      })
-      ctx.body = successResponse(user)
+      username
+    })
+    if (!user) {
+      failureResponse(ctx, 200, '用户不存在')
     } else {
-      ctx.body = errorResponse('用户名或者密码不正确！')
+      const match = await User.findOne({
+        username,
+        password: md5Pwd(password)
+      })
+      if (match) {
+        ctx.cookies.set('userId', user._id, {
+          httpOnly: false
+        })
+        successResponse(ctx, match)
+      } else {
+        failureResponse(ctx, 200, '用户名或者密码不正确！')
+      }
     }
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
 
@@ -108,41 +97,33 @@ router.get('/chatMsg', async ctx => {
     const userId = ctx.cookies.get('userId')
     const chat = await Chat.find({
       '$or': [
-        {from: userId},
-        {to: userId}
+        { from: userId },
+        { to: userId }
       ]
     })
-    ctx.body = successResponse(chat)
+    successResponse(ctx, chat)
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
 
 router.post('/readMsg', async ctx => {
   try {
     const userId = ctx.cookies.get('userId')
-    const {from} = ctx.request.body
-    console.log(from, ctx.request.body)
-    const chat = await Chat.update({from, to: userId}, {
+    const { from } = ctx.request.body
+    const chat = await Chat.update({ from, to: userId }, {
       '$set': {
         isRead: true
       }
     }, {
       multi: true
     })
-    ctx.body = successResponse({
+    successResponse(ctx, {
       num: chat.nModified
     })
   } catch (err) {
-    ctx.status = 500
-    ctx.body = errorResponse(err.message)
+    failureResponse(ctx, 500, err.message)
   }
 })
-
-function md5Pwd(pwd) {
-  const salt = 'hale_vue_koa_mongoose_#$%^&*!@'
-  return utility.md5(utility.md5(pwd + salt))
-}
 
 module.exports = router
