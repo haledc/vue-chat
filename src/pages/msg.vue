@@ -22,7 +22,7 @@
           >
             {{chat.filter(item => (!item.isRead && item.to === user._id)).length}}
           </q-btn>
-          <q-btn icon="chevron_right" flat dense round/>
+          <q-btn icon="chevron_right" flat dense round />
         </q-item-side>
       </q-item>
     </q-card>
@@ -30,38 +30,38 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-  export default {
-    computed: {
-      ...mapGetters('user', ['user', 'targetInfo']),
-      ...mapGetters('chat', ['msgList'])
+export default {
+  computed: {
+    ...mapGetters('user', ['user', 'targetInfo']),
+    ...mapGetters('chat', ['msgList'])
+  },
+  methods: {
+    onReadMsg (chat) {
+      const lastItem = chat[chat.length - 1]
+      // 通过判断发送信息的对象来获取聊天对象
+      // 如果是用户自己发的，那么接受的对象(to)就是聊天对象
+      // 如果不是用户发到，那么发送的对象(from)就是聊天对象
+      const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
+      this.readMsg({ from })
+        .then(() => {
+          this.$router.push(`/chat/${from}`)
+          this.updateChat()
+        })
     },
-    methods: {
-      onReadMsg(chat) {
-        const lastItem = chat[chat.length - 1]
-        // 通过判断发送信息的对象来获取聊天对象
-        // 如果是用户自己发的，那么接受的对象(to)就是聊天对象
-        // 如果不是用户发到，那么发送的对象(from)就是聊天对象
-        const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
-        this.readMsg({from})
-          .then(() => {
-            this.$router.push(`/chat/${from}`)
-            this.updateChat()
-          })
-      },
-      updateChat() {
-        this.getChatMsg()
-      },
-      getTarget(chat) {
-        const lastItem = chat[chat.length - 1]
-        const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
-        return this.targetInfo[from]
-      },
-      ...mapMutations('chat', ['setChatMsg']),
-      ...mapActions('chat', ['getChatMsg', 'readMsg'])
-    }
+    updateChat () {
+      this.getChatMsg()
+    },
+    getTarget (chat) {
+      const lastItem = chat[chat.length - 1]
+      const from = lastItem.from === this.user._id ? lastItem.to : lastItem.from
+      return this.targetInfo[from]
+    },
+    ...mapMutations('chat', ['setChatMsg']),
+    ...mapActions('chat', ['getChatMsg', 'readMsg'])
   }
+}
 </script>
 
 <style>

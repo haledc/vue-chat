@@ -1,5 +1,5 @@
 import api from '../../assets/api'
-import {LocalStorage} from 'quasar'
+import { LocalStorage } from 'quasar'
 
 const state = {
   user: LocalStorage.get.item('chat_user') || {},
@@ -31,32 +31,35 @@ const mutations = {
 }
 
 const actions = {
-  login: ({commit}, {username, password}) => {
+  login: ({ commit }, { username, password }) => {
     return api.login(username, password)
-      .then(data => {
-        if (data.status === 0) {
-          commit('doLogin', data.result)
+      .then(res => {
+        const { data } = res
+        if (data.success) {
+          commit('doLogin', data.data)
         }
-        return data
+        return res
       })
   },
-  register: ({commit}, {username, password, type}) => {
+  register: ({ commit }, { username, password, type }) => {
     return api.register(username, password, type)
   },
-  updateInfo: ({commit}, updateData) => {
+  updateInfo: ({ commit }, updateData) => {
     return api.updateInfo(updateData)
-      .then(data => {
-        if (data.status === 0) {
-          commit('doLogin', data.result)
+      .then(res => {
+        const { data } = res
+        if (data.success) {
+          commit('doLogin', data.data)
         }
-        return data
+        return res
       })
   },
-  getTargetList: ({commit}, type) => {
+  getTargetList: ({ commit }, type) => {
     api.getTargetList(type)
-      .then(data => {
-        if (data.status === 0) {
-          commit('setTargetList', data.result)
+      .then(res => {
+        const { data } = res
+        if (data.success) {
+          commit('setTargetList', data.data)
         }
       })
   },

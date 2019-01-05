@@ -8,8 +8,9 @@
     </q-layout-header>
     <q-page-container>
       <q-page padding class="q-mx-sm">
-        <div v-for="(msg, i) in filterList"
-             :key="i"
+        <div
+          v-for="(msg, i) in filterList"
+          :key="i"
         >
           <q-chat-message
             v-show="msg.from === target"
@@ -46,75 +47,76 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
-  export default {
-    props: {
-      target: String
+export default {
+  props: {
+    target: String
+  },
+  data () {
+    return {
+      message: '',
+      readNum: 0,
+      receiveData: ''
+    }
+  },
+  created () {
+    this.receiveMsg()
+  },
+  beforeDestroy () {
+    this.readMsg({
+      from: this.target
+    })
+    this.updateChat()
+  },
+  computed: {
+    targetName () {
+      return this.targetInfo[this.target].name
     },
-    data() {
-      return {
-        message: '',
-        readNum: 0,
-        receiveData: ''
+    filterList () {
+      return this.chatMsg.filter(item => item.chatId.indexOf(this.target) > -1)
+    },
+    ...mapGetters('user', ['user', 'targetInfo']),
+    ...mapGetters('chat', ['chatMsg'])
+  },
+  methods: {
+    back () {
+      this.$router.back()
+    },
+    sendMsg () {
+      const from = this.user._id
+      console.log(from)
+      if (this.message.trim()) {
+        this.$socket.emit('sendMsg', { from, to: this.target, msg: this.message })
+      }
+      this.message = ''
+    },
+    setAvatar (from) {
+      if (from === this.target) {
+        return `statics/avatar-img/${this.targetInfo[this.target].avatar}.png`
+      } else {
+        return `statics/avatar-img/${this.user.avatar}.png`
       }
     },
-    created() {
-      this.receiveMsg()
-    },
-    beforeDestroy() {
-      this.readMsg({
-        from: this.target
+    receiveMsg () {
+      this.$socket.removeAllListeners()
+      this.$socket.on('receiveMsg', data => {
+        this.receiveData = data
       })
-      this.updateChat()
     },
-    computed: {
-      targetName() {
-        return this.targetInfo[this.target].name
-      },
-      filterList() {
-        return this.chatMsg.filter(item => item.chatId.indexOf(this.target) > -1)
-      },
-      ...mapGetters('user', ['user', 'targetInfo']),
-      ...mapGetters('chat', ['chatMsg'])
+    updateChat () {
+      this.getChatMsg()
     },
-    methods: {
-      back() {
-        this.$router.back()
-      },
-      sendMsg() {
-        const from = this.user._id
-        if (this.message.trim()) {
-          this.$socket.emit('sendMsg', {from, to: this.target, msg: this.message})
-        }
-        this.message = ''
-      },
-      setAvatar(from) {
-        if (from === this.target) {
-          return `statics/avatar-img/${this.targetInfo[this.target].avatar}.png`
-        } else {
-          return `statics/avatar-img/${this.user.avatar}.png`
-        }
-      },
-      receiveMsg() {
-        this.$socket.removeAllListeners()
-        this.$socket.on('receiveMsg', data => {
-          this.receiveData = data
-        })
-      },
-      updateChat() {
-        this.getChatMsg()
-      },
-      ...mapMutations('chat', ['setChatMsg']),
-      ...mapActions('chat', ['readMsg', 'getChatMsg'])
-    },
-    watch: {
-      receiveData() {
-        this.chatMsg.push(this.receiveData)
-        this.setChatMsg(this.chatMsg)
-      }
+    ...mapMutations('chat', ['setChatMsg']),
+    ...mapActions('chat', ['readMsg', 'getChatMsg'])
+  },
+  watch: {
+    receiveData () {
+      this.chatMsg.push(this.receiveData)
+      this.setChatMsg(this.chatMsg)
     }
   }
+}
 </script>
 
 <style>

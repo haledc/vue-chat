@@ -16,7 +16,7 @@
           {{target.company}}
         </q-item-side>
       </q-item>
-      <q-card-separator/>
+      <q-card-separator />
       <q-item v-show="target.salary">
         {{target.salary}}
       </q-item>
@@ -28,18 +28,18 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
-  export default {
-    computed: {
-      ...mapGetters('user', ['targetList'])
-    },
-    methods: {
-      goChat(target) {
-        this.$router.push(`/chat/${target._id}`)
-      }
+export default {
+  computed: {
+    ...mapGetters('user', ['targetList'])
+  },
+  methods: {
+    goChat (target) {
+      this.$router.push(`/chat/${target._id}`)
     }
   }
+}
 </script>
 
 <style>

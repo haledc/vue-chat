@@ -1,5 +1,5 @@
 import api from '../../assets/api'
-import {LocalStorage} from 'quasar'
+import { LocalStorage } from 'quasar'
 
 const state = {
   chatMsg: LocalStorage.get.item('chat_chatMsg') || []
@@ -27,15 +27,16 @@ const mutations = {
 }
 
 const actions = {
-  getChatMsg: ({commit}) => {
+  getChatMsg: ({ commit }) => {
     api.getChatMsg()
-      .then(data => {
-        if (data.status === 0) {
-          commit('setChatMsg', data.result)
+      .then(res => {
+        const { data } = res
+        if (data.success) {
+          commit('setChatMsg', data.data)
         }
       })
   },
-  readMsg: ({commit}, {from}) => {
+  readMsg: ({ commit }, { from }) => {
     return api.readMsg(from)
   }
 }
